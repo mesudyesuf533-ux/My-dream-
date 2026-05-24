@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial; text-align: center; }
+
+.keyboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.key {
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+  background: #444;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  position: relative;
+}
+
+.popup {
+  position: absolute;
+  bottom: 60px;
+  background: #222;
+  display: flex;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.popup div {
+  margin: 3px;
+  padding: 5px;
+  background: #666;
+  border-radius: 4px;
+}
+</style>
+</head>
+
+<body>
+
+<h3>Amharic Smart Keyboard</h3>
+<textarea id="output" style="width:90%;height:80px;"></textarea>
+
+<div class="keyboard" id="keyboard"></div>
+
+<script>
+let output = document.getElementById("output");
+let keyboard = document.getElementById("keyboard");
+
+// Base letters with variants
+let fidel = {
+  "ሀ": ["ሀ","ሁ","ሂ","ሃ","ሄ","ህ","ሆ"],
+  "ለ": ["ለ","ሉ","ሊ","ላ","ሌ","ል","ሎ"],
+  "መ": ["መ","ሙ","ሚ","ማ","ሜ","ም","ሞ"],
+  "ረ": ["ረ","ሩ","ሪ","ራ","ሬ","ር","ሮ"],
+  "ሰ": ["ሰ","ሱ","ሲ","ሳ","ሴ","ስ","ሶ"],
+  "ቀ": ["ቀ","ቁ","ቂ","ቃ","ቄ","ቅ","ቆ"],
+  "በ": ["በ","ቡ","ቢ","ባ","ቤ","ብ","ቦ"],
+  "ተ": ["ተ","ቱ","ቲ","ታ","ቴ","ት","ቶ"],
+  "ነ": ["ነ","ኑ","ኒ","ና","ኔ","ን","ኖ"],
+  "አ": ["አ","ኡ","ኢ","ኣ","ኤ","እ","ኦ"]
+};
+
+function createKeyboard() {
+  for (let base in fidel) {
+    let key = document.createElement("div");
+    key.className = "key";
+    key.innerText = base;
+
+    let pressTimer;
+
+    key.addEventListener("touchstart", () => {
+      pressTimer = setTimeout(() => {
+        showPopup(key, fidel[base]);
+      }, 500); // hold time
+    });
+
+    key.addEventListener("touchend", () => {
+      clearTimeout(pressTimer);
+      output.value += base;
+    });
+
+    keyboard.appendChild(key);
+  }
+}
+
+function showPopup(key, letters) {
+  let popup = document.createElement("div");
+  popup.className = "popup";
+
+  letters.forEach(l => {
+    let item = document.createElement("div");
+    item.innerText = l;
+    item.onclick = () => {
+      output.value += l;
+      popup.remove();
+    };
+    popup.appendChild(item);
+  });
+
+  key.appendChild(popup);
+
+  setTimeout(() => {
+    if (popup) popup.remove();
+  }, 3000);
+}
+
+createKeyboard();
+</script>
+
+</body>
+</html>
