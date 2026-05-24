@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mobile Tap Game</title>
+    <style>
+        /* CSS to make it look good on a mobile screen */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #222;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden; /* Prevents scrolling on mobile */
+            user-select: none;
+        }
 
+        #ui {
+            font-size: 20px;
+            margin-top: 15px;
+        }
+
+        /* The game screen area */
+        #game-box {
+            position: relative;
+            width: 100vw;
+            height: 80vh;
+            background: #333;
+            margin-top: 10px;
+            border-top: 2px solid #555;
+        }
+
+        /* The target button to tap */
+        #target {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background-color: #ff4757;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Hidden until game starts */
+            box-shadow: 0 0 15px #ff4757;
+        }
+
+        #start-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #2ed573;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 40vh;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui">
+        <span>Score: <b id="score">0</b></span> | 
+        <span>Time: <b id="time">15</b>s</span>
+    </div>
+
+    <div id="game-box">
+        <button id="start-btn" onclick="startGame()">START GAME</button>
+        <div id="target" onclick="hitTarget()"></div>
+    </div>
+
+    <script>
+        // JavaScript Game Logic
+        let score = 0;
+        let timeLeft = 15;
+        let gameInterval;
+        
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const target = document.getElementById('target');
+        const startBtn = document.getElementById('start-btn');
+        const gameBox = document.getElementById('game-box');
+
+        function startGame() {
+            score = 0;
+            timeLeft = 15;
+            scoreDisplay.innerText = score;
+            timeDisplay.innerText = timeLeft;
+            
+            startBtn.style.display = 'none';
+            target.style.display = 'block';
+            
+            moveTarget();
+            
+            // Countdown timer
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                timeDisplay.innerText = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function moveTarget() {
+            // Get screen boundaries for the game box
+            const maxX = gameBox.clientWidth - 80;
+            const maxY = gameBox.clientHeight - 80;
+            
+            // Generate random positions
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            // Apply new position to target
+            target.style.left = randomX + 'px';
+            target.style.top = randomY + 'px';
+        }
+
+        function hitTarget() {
+            score++;
+            scoreDisplay.innerText = score;
+            moveTarget(); // Move it to a new place instantly when tapped
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            target.style.display = 'none';
+            startBtn.style.display = 'inline-block';
+            startBtn.innerText = "Play Again! Final Score: " + score;
+        }
+    </script>
+</body>
+</html>
